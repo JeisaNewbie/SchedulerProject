@@ -1,13 +1,18 @@
 package com.example.scheduler.service;
 
-import com.example.scheduler.dto.SchedulerRequestDto;
-import com.example.scheduler.dto.SchedulerResponseDto;
+import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.dto.ToDoResponseDto;
 import com.example.scheduler.dto.UserResponseDto;
+import com.example.scheduler.entity.ToDo;
+import com.example.scheduler.entity.User;
 import com.example.scheduler.repository.SchedulerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SchedulerServiceImpl implements SchedulerService {
@@ -32,9 +37,32 @@ public class SchedulerServiceImpl implements SchedulerService {
         return List.of();
     }
 
-    @Override // 일정 생성 to_do(registerd_date modified_date work) user (name password email) schedule (date)
-    public SchedulerResponseDto saveSchedule(SchedulerRequestDto schedulerRequestDto) {
-        return null;
+    @Override // 일정 생성 to_do(registerd_date modified_date work) user (name password email)
+    @Transactional
+    public ScheduleResponseDto saveSchedule(User user, ToDo toDo) {
+        // 사용자가 존재하는지 확인
+        // 사용자가 존재하지 않으면 사용자 저장
+
+        /*
+
+        데이터 베이스에 유저가 존재해서 유저를 반환하더라도 orElse 는 항상 실행이 보장된다.
+        따라서 saveUser(user)가 실행이 되기 때문에 Unique 속성인 email Column 으로 인하여 예외가 발생한다.
+
+        User savedUser = schedulerRepository.findUserByEmailAndPassword(user)
+                .orElse(schedulerRepository.saveUser(user));
+
+         */
+
+        // 그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
+        User savedUser = schedulerRepository.findUserByEmailAndPassword(user)
+                .orElseGet(() -> schedulerRepository.saveUser(user));
+
+        // 새 일정을 추가
+        toDo.setUser(savedUser);
+        ToDo savedTodo = schedulerRepository.saveToDo(toDo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+        return new ScheduleResponseDto(savedUser, savedTodo);
     }
 
     @Override
