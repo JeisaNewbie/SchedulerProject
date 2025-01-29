@@ -1,18 +1,22 @@
 package com.example.scheduler.controller;
 
-import com.example.scheduler.dto.SchedulerRequestDto;
-import com.example.scheduler.dto.SchedulerResponseDto;
+import com.example.scheduler.dto.ScheduleRequestDto;
+import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.dto.ToDoResponseDto;
 import com.example.scheduler.dto.UserResponseDto;
+import com.example.scheduler.entity.ToDo;
+import com.example.scheduler.entity.User;
 import com.example.scheduler.service.SchedulerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController("/api/schedule")
+@RestController
+@RequestMapping("/api/schedule")
 public class SchedulerController {
     private final SchedulerService schedulerService;
 
@@ -36,22 +40,37 @@ public class SchedulerController {
     }
 
     @PostMapping // 일정 생성 to_do(registerd_date modified_date work) user (name password email) schedule (date)
-    public ResponseEntity<SchedulerResponseDto> createSchedule(@RequestBody SchedulerRequestDto schedulerRequestDto) {
-        return new ResponseEntity<>(schedulerService.saveSchedule(schedulerRequestDto), HttpStatus.OK);
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = User.builder()
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .build();
+
+        ToDo toDo = ToDo.builder()
+                .registeredDate(now)
+                .modifiedDate(now)
+                .date(dto.getDate())
+                .work(dto.getWork())
+                .build();
+
+        return new ResponseEntity<>(schedulerService.saveSchedule(user, toDo), HttpStatus.CREATED);
     }
 
     @PatchMapping("/users/{id}/to-dos/{toDoId}") // 일정 수정
     public ResponseEntity<ToDoResponseDto> updateToDo(
             @PathVariable Long id,
             @PathVariable Long toDoId,
-            @RequestBody SchedulerRequestDto schedulerRequestDto
+            @RequestBody ScheduleRequestDto scheduleRequestDto
     )
     {
         return new ResponseEntity<>(schedulerService.updateToDo(), HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/user") // 유저 정보 수정
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") Long id, @RequestBody SchedulerRequestDto schedulerRequestDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") Long id, @RequestBody ScheduleRequestDto scheduleRequestDto) {
         return new ResponseEntity<>(schedulerService.updateUser(), HttpStatus.OK);
     }
 
