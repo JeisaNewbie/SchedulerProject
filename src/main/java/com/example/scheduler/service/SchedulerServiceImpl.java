@@ -42,9 +42,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
         List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
 
-        return toDoList.stream()
-                .map(toDo -> new ToDoResponseDto(toDo, savedUser))
-                .collect(Collectors.toList());
+        return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
     // 수정일 로 해당 날짜의 모든 일정 조회
