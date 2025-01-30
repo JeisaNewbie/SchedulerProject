@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ToDo {
     private Long id;
+    private Long userId;
     private LocalDateTime registeredDate;
     private LocalDateTime modifiedDate;
     private LocalDate date;

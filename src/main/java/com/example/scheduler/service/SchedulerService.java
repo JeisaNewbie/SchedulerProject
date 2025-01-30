@@ -7,12 +7,13 @@ import com.example.scheduler.dto.UserResponseDto;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface SchedulerService {
     List<ToDoResponseDto> findScheduleByUserInfo(User user);
-    List<ToDoResponseDto> findScheduleByModifiedDate(String date);
-    List<ToDoResponseDto> findScheduleByDay(String date);
+    List<ToDoResponseDto> findScheduleByModifiedDate(LocalDate date);
+    List<ToDoResponseDto> findScheduleByTheDay(LocalDate date);
     ScheduleResponseDto saveSchedule(User user, ToDo toDo);
     ToDoResponseDto updateToDo();
     UserResponseDto updateUser();

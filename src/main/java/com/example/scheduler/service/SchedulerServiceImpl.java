@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SchedulerServiceImpl implements SchedulerService {
@@ -38,22 +40,55 @@ public class SchedulerServiceImpl implements SchedulerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + userName + "-" + userId));
 
         List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
+
         return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
     // 수정일 로 해당 날짜의 모든 일정 조회
     @Override
-    public List<ToDoResponseDto> findScheduleByModifiedDate(String date) {
-        return List.of();
+    public List<ToDoResponseDto> findScheduleByModifiedDate(LocalDate date) {
+
+        return schedulerRepository.findToDoListByModifiedDate(date)
+                .stream()
+                .map(toDo -> {
+                    User savedUser = schedulerRepository.findUserByUserId(toDo.getUserId())
+                            .orElseGet(() -> User.builder().name("임시 사용자")
+                                    .email("example@example.com")
+                                    .id(null)
+                                    .build());
+                    return new ToDoResponseDto(toDo, savedUser);
+                })
+                .collect(Collectors.toList());
     }
 
     // D-DAY 로 해당 날짜의 모든 일정 조회
     @Override
-    public List<ToDoResponseDto> findScheduleByDay(String date) {
-        return List.of();
+    public List<ToDoResponseDto> findScheduleByTheDay(LocalDate date) {
+
+        /*
+        * toList() 대신 collect(Collectors.toList()) 를 사용한 이유
+        * toList() 는 불변 객체를 반환한다 (The returned List is unmodifiable).
+        * client 코드에서 RequestParams 값 (order = asc or desc)에 따라서 list 를 재정렬 해야한다.
+        * 따라서 collect(Collectors.toList()) 로 stream 값을 반환하거나
+        * client 코드에서 new ArrayList<>(schedulerService.findScheduleByTheDay(date)) 로 코드를 수정해야한다.
+        * stream 에서 mutable list 를 반환하는게 가독성이 더 좋아보여서 선택했다.
+        */
+
+        return schedulerRepository.findToDoListByTheDay(date)
+                .stream()
+                .map(toDo -> {
+                    User savedUser = schedulerRepository.findUserByUserId(toDo.getUserId())
+                            .orElseGet(() -> User.builder()
+                                    .id(null)
+                                    .name("임시 사용자")
+                                    .email("example@example.com")
+                                    .build());
+                    return new ToDoResponseDto(toDo, savedUser);
+                })
+                .collect(Collectors.toList());
     }
 
-    // 일정 생성 to_do(registerd_date modified_date work) user (name password email)
+    // 일정 생성 to_do(registered_date modified_date work) user (name password email)
     @Override
     @Transactional
     public ScheduleResponseDto saveSchedule(User user, ToDo toDo) {
