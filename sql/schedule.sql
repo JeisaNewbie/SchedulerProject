@@ -15,6 +15,7 @@ CREATE TABLE to_do (
     FOREIGN KEY (user_id) REFERENCES user(id),
 #     schedule_id BIGINT,
 #     FOREIGN KEY (schedule_id) REFERENCES schedule(id),
+    date DATE,
     registered_date DATETIME,
     modified_date DATETIME,
     work TEXT

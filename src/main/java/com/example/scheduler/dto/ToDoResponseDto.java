@@ -1,5 +1,7 @@
 package com.example.scheduler.dto;
 
+import com.example.scheduler.entity.ToDo;
+import com.example.scheduler.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +20,15 @@ public class ToDoResponseDto {
     private LocalDateTime registeredDate;
     private LocalDateTime modifiedDate;
     private String work;
+
+
+    public ToDoResponseDto(ToDo toDo, User user) {
+        this.id = toDo.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.date = toDo.getDate();
+        this.registeredDate = toDo.getRegisteredDate();
+        this.modifiedDate = toDo.getModifiedDate();
+        this.work = toDo.getWork();
+    }
 }

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SchedulerServiceImpl implements SchedulerService {
@@ -22,9 +21,14 @@ public class SchedulerServiceImpl implements SchedulerService {
         this.schedulerRepository = schedulerRepository;
     }
 
-    @Override // 유저id로 해당유저가 등록한 모든 일정 조회
-    public List<ToDoResponseDto> findScheduleById(Long id) {
-        return List.of();
+    @Override // 유저 email 로 해당유저가 등록한 모든 일정 조회
+    public List<ToDoResponseDto> findScheduleByUserInfo(User user) {
+
+        User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다 = " + user.getEmail()));
+
+        List<ToDo> toDoList = schedulerRepository.findToDoListByUser(savedUser);
+        return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
     @Override // 수정일 로 해당 날짜의 모든 일정 조회
@@ -54,7 +58,7 @@ public class SchedulerServiceImpl implements SchedulerService {
          */
 
         // 그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
-        User savedUser = schedulerRepository.findUserByEmailAndPassword(user)
+        User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
                 .orElseGet(() -> schedulerRepository.saveUser(user));
 
         // 새 일정을 추가

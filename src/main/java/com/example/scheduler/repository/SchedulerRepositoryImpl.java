@@ -45,8 +45,9 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public Optional<User> findUserByEmailAndPassword(User user) {
-        List<User> ret = jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), user.getEmail(), user.getPassword());
+    public Optional<User> findUserByEmailAndPassword(String email, String password) {
+        // 사용자 검증 로직 수정
+        List<User> ret = jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), email, password);
         return ret.stream().findAny();
     }
 
@@ -74,6 +75,11 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
                 .build());
     }
 
+    @Override
+    public List<ToDo> findToDoListByUser(User user) {
+        return jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), user.getId());
+    }
+
     private RowMapper<User> userRowMapper () {
         return new RowMapper<User> () {
 
@@ -83,6 +89,22 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
                         .id(rs.getLong("id"))
                         .name(rs.getString("name"))
                         .email(rs.getString("email"))
+                        .build();
+            }
+        };
+    }
+
+    private RowMapper<ToDo> toDoRowMapper () {
+        return new RowMapper<ToDo>() {
+
+            @Override
+            public ToDo mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return ToDo.builder()
+                        .id(rs.getLong("id"))
+                        .registeredDate(rs.getTimestamp("registered_date").toLocalDateTime())
+                        .modifiedDate(rs.getTimestamp("modified_date").toLocalDateTime())
+                        .date(rs.getDate("date").toLocalDate())
+                        .work(rs.getString("work"))
                         .build();
             }
         };
