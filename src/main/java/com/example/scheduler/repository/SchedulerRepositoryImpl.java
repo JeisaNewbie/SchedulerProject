@@ -39,7 +39,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
 
         return User.builder()
                 .id(key.longValue())
-                .name(user.getName())
+                .name(user.getName() + "-" + key.longValue())
                 .email(user.getEmail())
                 .build();
     }
@@ -47,8 +47,9 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     @Override
     public Optional<User> findUserByEmailAndPassword(String email, String password) {
         // 사용자 검증 로직 수정
-        List<User> ret = jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), email, password);
-        return ret.stream().findAny();
+        return jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), email, password)
+                .stream()
+                .findAny();
     }
 
     @Override
@@ -78,6 +79,13 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     @Override
     public List<ToDo> findToDoListByUserId(Long userId) {
         return jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), userId);
+    }
+
+    @Override
+    public Optional<User> findUserByUserNameAndUserId(String userName, Long userId) {
+        return jdbcTemplate.query("select * from user where name = ? and id = ?", userRowMapper(), userName, userId)
+                .stream()
+                .findAny();
     }
 
     private RowMapper<User> userRowMapper () {

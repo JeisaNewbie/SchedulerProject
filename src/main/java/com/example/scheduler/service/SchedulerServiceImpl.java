@@ -21,7 +21,8 @@ public class SchedulerServiceImpl implements SchedulerService {
         this.schedulerRepository = schedulerRepository;
     }
 
-    @Override // 유저 email 로 해당유저가 등록한 모든 일정 조회
+    // 유저 email 로 해당유저가 등록한 모든 일정 조회
+    @Override
     public List<ToDoResponseDto> findScheduleByUserInfo(User user) {
 
         User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
@@ -31,17 +32,29 @@ public class SchedulerServiceImpl implements SchedulerService {
         return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
-    @Override // 수정일 로 해당 날짜의 모든 일정 조회
+    @Override
+    public List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId) {
+        User savedUser = schedulerRepository.findUserByUserNameAndUserId(userName, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + userName + "-" + userId));
+
+        List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
+        return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
+    }
+
+    // 수정일 로 해당 날짜의 모든 일정 조회
+    @Override
     public List<ToDoResponseDto> findScheduleByModifiedDate(String date) {
         return List.of();
     }
 
-    @Override // D-DAY 로 해당 날짜의 모든 일정 조회
+    // D-DAY 로 해당 날짜의 모든 일정 조회
+    @Override
     public List<ToDoResponseDto> findScheduleByDay(String date) {
         return List.of();
     }
 
-    @Override // 일정 생성 to_do(registerd_date modified_date work) user (name password email)
+    // 일정 생성 to_do(registerd_date modified_date work) user (name password email)
+    @Override
     @Transactional
     public ScheduleResponseDto saveSchedule(User user, ToDo toDo) {
         // 사용자가 존재하는지 확인
@@ -88,4 +101,6 @@ public class SchedulerServiceImpl implements SchedulerService {
     public void deleteToDoById(Long id) {
 
     }
+
+
 }

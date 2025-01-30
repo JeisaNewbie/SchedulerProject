@@ -33,6 +33,11 @@ public class SchedulerController {
         return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByUserInfo(user)), HttpStatus.OK);
     }
 
+    @GetMapping("/users/{name}-{id}")
+    public ResponseEntity<List<ToDoResponseDto>> findScheduleByName(@PathVariable String name, @PathVariable Long id) {
+        return new ResponseEntity<>(schedulerService.findScheduleByUserNameAndUserId(name, id), HttpStatus.OK);
+    }
+
     // 수정일 로 해당 날짜의 모든 일정 조회
     @GetMapping("/modified-date/{date}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByModifiedDate(@PathVariable("date") String date) {
