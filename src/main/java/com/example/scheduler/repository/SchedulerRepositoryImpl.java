@@ -95,7 +95,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
             public User mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return User.builder()
                         .id(rs.getLong("id"))
-                        .name(rs.getString("name"))
+                        .name(rs.getString("name") + '-' + rs.getLong("id"))
                         .email(rs.getString("email"))
                         .build();
             }
