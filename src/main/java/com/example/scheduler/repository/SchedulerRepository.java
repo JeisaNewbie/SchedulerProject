@@ -13,5 +13,5 @@ public interface SchedulerRepository {
 
     Optional<ToDo> saveToDo(ToDo toDo);
 
-    List<ToDo> findToDoListByUserId(Long id);
+    List<ToDo> findToDoListByUserId(Long userId);
 }
