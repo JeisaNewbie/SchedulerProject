@@ -34,6 +34,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
+    // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @Override
     public List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId) {
         User savedUser = schedulerRepository.findUserByUserNameAndUserId(userName, userId)

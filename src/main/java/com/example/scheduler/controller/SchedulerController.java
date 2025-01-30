@@ -35,6 +35,7 @@ public class SchedulerController {
         return new ResponseEntity<>(schedulerService.findScheduleByUserInfo(user), HttpStatus.OK);
     }
 
+    // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @GetMapping("/users/{name}-{id}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByName(@PathVariable String name, @PathVariable Long id) {
         return new ResponseEntity<>(schedulerService.findScheduleByUserNameAndUserId(name, id), HttpStatus.OK);
