@@ -11,6 +11,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +48,6 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public Optional<User> findUserByEmailAndPassword(String email, String password) {
-        // 사용자 검증 로직 수정
-        return jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), email, password)
-                .stream()
-                .findAny();
-    }
-
-    @Override
     public Optional<ToDo> saveToDo(ToDo toDo) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("to_do")
@@ -77,15 +72,48 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public List<ToDo> findToDoListByUserId(Long userId) {
-        return jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), userId);
+    public Optional<User> findUserByUserId(Long userId) {
+        return jdbcTemplate.query("select * from user where id = ?", userRowMapper(), userId)
+                .stream()
+                .findAny();
     }
+
+    @Override
+    public Optional<User> findUserByEmailAndPassword(String email, String password) {
+        // 사용자 검증 로직 수정
+        return jdbcTemplate.query("select * from user where email = ? and password = ?", userRowMapper(), email, password)
+                .stream()
+                .findAny();
+    }
+
 
     @Override
     public Optional<User> findUserByUserNameAndUserId(String userName, Long userId) {
         return jdbcTemplate.query("select * from user where name = ? and id = ?", userRowMapper(), userName, userId)
                 .stream()
                 .findAny();
+    }
+
+    @Override
+    public List<ToDo> findToDoListByUserId(Long userId) {
+        return jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), userId);
+    }
+
+    @Override
+    public List<ToDo> findToDoListByModifiedDate(LocalDate date) {
+        LocalDateTime theDay = LocalDateTime.of(date, LocalTime.MIN);
+        LocalDateTime theDayAfter = LocalDateTime.of(date.plusDays(1), LocalTime.MIN);
+
+        return jdbcTemplate.query("select * from to_do where modified_date >= ? and modified_date < ?"
+                , toDoRowMapper()
+                , Timestamp.valueOf(theDay)
+                , Timestamp.valueOf(theDayAfter));
+
+    }
+
+    @Override
+    public List<ToDo> findToDoListByTheDay(LocalDate date) {
+        return jdbcTemplate.query("select * from to_do where date = ?", toDoRowMapper(), Date.valueOf(date));
     }
 
     private RowMapper<User> userRowMapper () {
@@ -109,6 +137,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
             public ToDo mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return ToDo.builder()
                         .id(rs.getLong("id"))
+                        .userId(rs.getLong("user_id"))
                         .registeredDate(rs.getTimestamp("registered_date").toLocalDateTime())
                         .modifiedDate(rs.getTimestamp("modified_date").toLocalDateTime())
                         .date(rs.getDate("date").toLocalDate())

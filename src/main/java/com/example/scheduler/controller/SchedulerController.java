@@ -1,5 +1,7 @@
 package com.example.scheduler.controller;
 
+import com.example.scheduler.comparator.ModifiedDateComparator;
+import com.example.scheduler.comparator.TheDayComparator;
 import com.example.scheduler.dto.*;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
@@ -8,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,7 +32,7 @@ public class SchedulerController {
                 .password(dto.getPassword())
                 .build();
 
-        return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByUserInfo(user)), HttpStatus.OK);
+        return new ResponseEntity<>(schedulerService.findScheduleByUserInfo(user), HttpStatus.OK);
     }
 
     @GetMapping("/users/{name}-{id}")
@@ -40,13 +42,33 @@ public class SchedulerController {
 
     // 수정일 로 해당 날짜의 모든 일정 조회
     @GetMapping("/modified-date/{date}")
-    public ResponseEntity<List<ToDoResponseDto>> findScheduleByModifiedDate(@PathVariable("date") String date) {
-        return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByModifiedDate(date)), HttpStatus.OK);
+    public ResponseEntity<List<ToDoResponseDto>> findScheduleByModifiedDate(
+            @PathVariable("date") LocalDate date,
+            @RequestParam(defaultValue = "asc") String order
+    ) {
+        List<ToDoResponseDto> list = schedulerService.findScheduleByModifiedDate(date);
+
+        if ("desc".equals(order)) {
+            list.sort(new ModifiedDateComparator().reversed());
+        }
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping("/d-day/{date}") // D-DAY 로 해당 날짜의 모든 일정 조회
-    public ResponseEntity<List<ToDoResponseDto>> findScheduleByDay(@PathVariable("date") String date) {
-        return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByDay(date)), HttpStatus.OK);
+    // D-DAY 로 해당 날짜의 모든 일정 조회
+    @GetMapping("/the-day/{date}")
+    public ResponseEntity<List<ToDoResponseDto>> findScheduleByTheDay(
+            @PathVariable("date") LocalDate date,
+            @RequestParam(defaultValue = "asc") String order
+    ) {
+
+         List<ToDoResponseDto> list = schedulerService.findScheduleByTheDay(date);
+
+        if ("desc".equals(order)) {
+            list.sort(new TheDayComparator().reversed());
+        }
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping // 일정 생성 to_do(registerd_date modified_date work) user (name password email) schedule (date)
