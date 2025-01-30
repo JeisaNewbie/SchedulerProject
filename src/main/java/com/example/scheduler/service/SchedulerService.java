@@ -10,7 +10,7 @@ import com.example.scheduler.entity.User;
 import java.util.List;
 
 public interface SchedulerService {
-    List<ToDoResponseDto> findScheduleById(Long id);
+    List<ToDoResponseDto> findScheduleByUserInfo(User user);
     List<ToDoResponseDto> findScheduleByModifiedDate(String date);
     List<ToDoResponseDto> findScheduleByDay(String date);
     ScheduleResponseDto saveSchedule(User user, ToDo toDo);

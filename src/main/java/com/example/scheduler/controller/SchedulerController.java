@@ -1,9 +1,6 @@
 package com.example.scheduler.controller;
 
-import com.example.scheduler.dto.ScheduleRequestDto;
-import com.example.scheduler.dto.ScheduleResponseDto;
-import com.example.scheduler.dto.ToDoResponseDto;
-import com.example.scheduler.dto.UserResponseDto;
+import com.example.scheduler.dto.*;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.service.SchedulerService;
@@ -24,12 +21,20 @@ public class SchedulerController {
         this.schedulerService = schedulerService;
     }
 
-    @GetMapping("/users/{id}") // 유저id로 해당유저가 등록한 모든 일정 조회
-    public ResponseEntity<List<ToDoResponseDto>> findScheduleById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleById(id)), HttpStatus.OK);
+    // 유저 email 과 password 로 해당유저가 등록한 모든 일정 조회
+    @PostMapping("/users")
+    public ResponseEntity<List<ToDoResponseDto>> findScheduleByEmailAndPassword(@RequestBody UserRequestDto dto) {
+
+        User user = User.builder()
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .build();
+
+        return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByUserInfo(user)), HttpStatus.OK);
     }
 
-    @GetMapping("/modified-date/{date}") // 수정일 로 해당 날짜의 모든 일정 조회
+    // 수정일 로 해당 날짜의 모든 일정 조회
+    @GetMapping("/modified-date/{date}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByModifiedDate(@PathVariable("date") String date) {
         return new ResponseEntity<>(new ArrayList<>(schedulerService.findScheduleByModifiedDate(date)), HttpStatus.OK);
     }
