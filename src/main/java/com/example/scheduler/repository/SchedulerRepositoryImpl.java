@@ -76,8 +76,8 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public Optional<List<ToDo>> findToDoListByUser(User user) {
-        return Optional.of(jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), user.getId()));
+    public List<ToDo> findToDoListByUser(User user) {
+        return jdbcTemplate.query("select * from to_do where user_id = ?", toDoRowMapper(), user.getId());
     }
 
     private RowMapper<User> userRowMapper () {
