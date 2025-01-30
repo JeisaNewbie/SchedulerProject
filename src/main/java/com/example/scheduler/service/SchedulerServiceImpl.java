@@ -27,7 +27,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다 = " + user.getEmail()));
 
-        List<ToDo> toDoList = schedulerRepository.findToDoListByUser(savedUser);
+        List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
         return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
     }
 
