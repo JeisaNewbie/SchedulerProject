@@ -127,8 +127,8 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public int deleteUser(Long id) {
-        return jdbcTemplate.update("delete from user where id = ?", id);
+    public void deleteUser(Long id) {
+        jdbcTemplate.update("delete from user where id = ?", id);
     }
 
     private RowMapper<User> userRowMapper () {

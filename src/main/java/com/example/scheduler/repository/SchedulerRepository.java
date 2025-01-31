@@ -28,5 +28,5 @@ public interface SchedulerRepository {
 
     void deleteToDoListByUserId(Long userId);
 
-    int deleteUser(Long id);
+    void deleteUser(Long id);
 }

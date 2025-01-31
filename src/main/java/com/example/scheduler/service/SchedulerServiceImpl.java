@@ -122,22 +122,18 @@ public class SchedulerServiceImpl implements SchedulerService {
     public void deleteUser(User user) {
 
         schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 이메일 혹은 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
 
         schedulerRepository.deleteToDoListByUserId(user.getId());
 
-        int deletedRow = schedulerRepository.deleteUser(user.getId());
-
-        if (deletedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + user.getName() + "-" + user.getId());
-        }
+        schedulerRepository.deleteUser(user.getId());
     }
 
     @Override
     public void deleteToDo(User user, Long toDoId) {
 
         schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 이메일 혹은 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
 
         int deletedRow = schedulerRepository.deleteToDo(toDoId);
 
