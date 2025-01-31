@@ -23,18 +23,6 @@ public class SchedulerController {
         this.schedulerService = schedulerService;
     }
 
-    // 유저 email 과 password 로 해당유저가 등록한 모든 일정 조회
-    @PostMapping("/users")
-    public ResponseEntity<List<ToDoResponseDto>> findScheduleByEmailAndPassword(@RequestBody UserRequestDto dto) {
-
-        User user = User.builder()
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .build();
-
-        return new ResponseEntity<>(schedulerService.findScheduleByUserInfo(user), HttpStatus.OK);
-    }
-
     // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @GetMapping("/users/{name}-{id}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByName(@PathVariable String name, @PathVariable Long id) {
@@ -107,15 +95,30 @@ public class SchedulerController {
         return new ResponseEntity<>(schedulerService.updateUser(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}") // 유저와 해당 유저의 모든 일정 삭제
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        schedulerService.deleteUser();
+    // 유저와 해당 유저의 모든 일정 삭제
+    @DeleteMapping("/users")
+    public ResponseEntity<Void> deleteUser(@RequestBody UserRequestDto dto) {
+        User user = User.builder()
+                .name(dto.getName())
+                .id(dto.getId())
+                .password(dto.getPassword())
+                .build();
+
+        schedulerService.deleteUser(user);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/users/{id}/to-dos/{toDoId}") // 해당 유저의 특정 일정 삭제
-    public ResponseEntity<Void> deleteToDo(@PathVariable Long id, @PathVariable Long toDoId) {
-        schedulerService.deleteToDoById(id);
+    // 해당 유저의 특정 일정 삭제
+    @DeleteMapping("/users/to-dos/{toDoId}")
+    public ResponseEntity<Void> deleteToDo(@PathVariable Long toDoId, @RequestBody UserRequestDto dto) {
+        User user = User.builder()
+                .name(dto.getName())
+                .id(dto.getId())
+                .password(dto.getPassword())
+                .build();
+
+        schedulerService.deleteToDo(user, toDoId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

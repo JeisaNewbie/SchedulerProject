@@ -14,7 +14,7 @@ public interface SchedulerRepository {
 
     Optional<User> findUserByUserId(Long userId);
 
-    Optional<User> findUserByEmailAndPassword(String email, String password);
+    Optional<User> findUserByUserIdAndPassword(Long userId, String password);
 
     Optional<User> findUserByUserNameAndUserId(String userName, Long userId);
 
@@ -23,4 +23,10 @@ public interface SchedulerRepository {
     List<ToDo> findToDoListByModifiedDate(LocalDate date);
 
     List<ToDo> findToDoListByTheDay(LocalDate date);
+
+    int deleteToDo(Long toDoId);
+
+    void deleteToDoListByUserId(Long userId);
+
+    void deleteUser(Long id);
 }
