@@ -27,7 +27,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId) {
         User savedUser = schedulerRepository.findUserByUserNameAndUserId(userName, userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + userName + "-" + userId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자가 존재하지 않습니다 = " + userName + "-" + userId));
 
         List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
 
@@ -129,7 +129,10 @@ public class SchedulerServiceImpl implements SchedulerService {
     public ToDoResponseDto updateToDo(User user, ToDo toDo) {
 
         User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+
+        schedulerRepository.findToDoById(toDo.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDo.getId()));
 
         int updatedRow = schedulerRepository.updateToDo(toDo);
 
