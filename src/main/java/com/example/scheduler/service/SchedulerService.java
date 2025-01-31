@@ -14,8 +14,8 @@ public interface SchedulerService {
     List<ToDoResponseDto> findScheduleByModifiedDate(LocalDate date);
     List<ToDoResponseDto> findScheduleByTheDay(LocalDate date);
     ScheduleResponseDto saveSchedule(User user, ToDo toDo);
-    ToDoResponseDto updateToDo();
-    UserResponseDto updateUser();
+    UserResponseDto updateUser(User user);
+    ToDoResponseDto updateToDo(User user, ToDo toDo);
     void deleteUser(User user);
 
     void deleteToDo(User user, Long toDoId);

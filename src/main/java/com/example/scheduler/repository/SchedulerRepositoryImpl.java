@@ -117,6 +117,23 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
+    public int updateUser(User user) {
+        return jdbcTemplate.update("update user set name = ?, email = ? where id = ?", user.getName(), user.getEmail(), user.getId());
+    }
+
+    @Override
+    public int updateToDo(ToDo toDo) {
+        return jdbcTemplate.update("update to_do set work = ?, modified_date = ? where id = ?", toDo.getWork(), Timestamp.valueOf(toDo.getModifiedDate()), toDo.getId());
+    }
+
+    @Override
+    public Optional<ToDo> findToDoById(Long id) {
+        return jdbcTemplate.query("select * from to_do where id = ?", toDoRowMapper(), id)
+                .stream()
+                .findAny();
+    }
+
+    @Override
     public int deleteToDo(Long toDoId) {
         return jdbcTemplate.update("delete from to_do where id = ?", toDoId);
     }

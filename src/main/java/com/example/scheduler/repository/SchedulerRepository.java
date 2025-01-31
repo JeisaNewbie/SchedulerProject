@@ -29,4 +29,10 @@ public interface SchedulerRepository {
     void deleteToDoListByUserId(Long userId);
 
     void deleteUser(Long id);
+
+    int updateUser(User user);
+
+    int updateToDo(ToDo toDo);
+
+    Optional<ToDo> findToDoById(Long id);
 }

@@ -108,13 +108,39 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public ToDoResponseDto updateToDo() {
-        return null;
+    public UserResponseDto updateUser(User user) {
+
+        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
+
+        int updatedRow = schedulerRepository.updateUser(user);
+
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        User updatedUser = schedulerRepository.findUserByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+
+        return new UserResponseDto(updatedUser);
     }
 
     @Override
-    public UserResponseDto updateUser() {
-        return null;
+    public ToDoResponseDto updateToDo(User user, ToDo toDo) {
+
+        User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+
+        int updatedRow = schedulerRepository.updateToDo(toDo);
+
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        ToDo updatedToDo = schedulerRepository.findToDoById(toDo.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDo.getId()));
+
+        return new ToDoResponseDto(updatedToDo, savedUser);
     }
 
     @Override
