@@ -11,15 +11,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface SchedulerService {
-    List<ToDoResponseDto> findScheduleByUserInfo(User user);
     List<ToDoResponseDto> findScheduleByModifiedDate(LocalDate date);
     List<ToDoResponseDto> findScheduleByTheDay(LocalDate date);
     ScheduleResponseDto saveSchedule(User user, ToDo toDo);
     ToDoResponseDto updateToDo();
     UserResponseDto updateUser();
-    void deleteUser();
+    void deleteUser(User user);
 
-    void deleteToDoById(Long id);
+    void deleteToDo(User user, Long toDoId);
 
     List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId);
 }

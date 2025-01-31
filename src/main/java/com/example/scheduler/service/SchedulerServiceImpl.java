@@ -23,17 +23,6 @@ public class SchedulerServiceImpl implements SchedulerService {
         this.schedulerRepository = schedulerRepository;
     }
 
-    // 유저 email 로 해당유저가 등록한 모든 일정 조회
-    @Override
-    public List<ToDoResponseDto> findScheduleByUserInfo(User user) {
-
-        User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다 = " + user.getEmail()));
-
-        List<ToDo> toDoList = schedulerRepository.findToDoListByUserId(savedUser.getId());
-        return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).toList();
-    }
-
     // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @Override
     public List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId) {
@@ -107,7 +96,7 @@ public class SchedulerServiceImpl implements SchedulerService {
          */
 
         // 그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
-        User savedUser = schedulerRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
+        User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
                 .orElseGet(() -> schedulerRepository.saveUser(user));
 
         // 새 일정을 추가
@@ -129,13 +118,32 @@ public class SchedulerServiceImpl implements SchedulerService {
     }
 
     @Override
-    public void deleteUser() {
+    @Transactional
+    public void deleteUser(User user) {
 
+        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 이메일 혹은 비밀번호가 일치하지 않습니다."));
+
+        schedulerRepository.deleteToDoListByUserId(user.getId());
+
+        int deletedRow = schedulerRepository.deleteUser(user.getId());
+
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + user.getName() + "-" + user.getId());
+        }
     }
 
     @Override
-    public void deleteToDoById(Long id) {
+    public void deleteToDo(User user, Long toDoId) {
 
+        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 이메일 혹은 비밀번호가 일치하지 않습니다."));
+
+        int deletedRow = schedulerRepository.deleteToDo(toDoId);
+
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDoId);
+        }
     }
 
 
