@@ -26,7 +26,7 @@ public class SchedulerController {
     // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @GetMapping("/users/{name}-{id}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByName(@PathVariable String name, @PathVariable Long id) {
-        return new ResponseEntity<>(schedulerService.findScheduleByUserNameAndUserId(name, id), HttpStatus.OK);
+        return ResponseEntity.ok(schedulerService.findScheduleByUserNameAndUserId(name, id));
     }
 
     // 수정일 로 해당 날짜의 모든 일정 조회
@@ -41,7 +41,7 @@ public class SchedulerController {
             list.sort(new ModifiedDateComparator().reversed());
         }
 
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return ResponseEntity.ok(list);
     }
 
     // D-DAY 로 해당 날짜의 모든 일정 조회
@@ -57,10 +57,10 @@ public class SchedulerController {
             list.sort(new TheDayComparator().reversed());
         }
 
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return ResponseEntity.ok(list);
     }
 
-    // 일정 생성 to_do(registerd_date modified_date work) user (name password email) schedule (date)
+    // 사용자 및 일정 생성
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
         LocalDateTime now = LocalDateTime.now();
@@ -79,10 +79,11 @@ public class SchedulerController {
                 .work(dto.getToDo().getWork())
                 .build();
 
-        return new ResponseEntity<>(schedulerService.saveSchedule(user, toDo), HttpStatus.CREATED);
+        return ResponseEntity.ok(schedulerService.saveSchedule(user, toDo));
     }
 
-    @PatchMapping("/users") // 유저 정보 수정
+    // 사용자 정보 수정
+    @PatchMapping("/users")
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserRequestDto dto) {
 
         User user = User.builder()
@@ -92,10 +93,11 @@ public class SchedulerController {
                 .password(dto.getPassword())
                 .build();
 
-        return new ResponseEntity<>(schedulerService.updateUser(user), HttpStatus.OK);
+        return ResponseEntity.ok(schedulerService.updateUser(user));
     }
 
-    @PatchMapping("/users/to-dos") // 일정 수정
+    // 일정 수정
+    @PatchMapping("/users/to-dos")
     public ResponseEntity<ToDoResponseDto> updateToDo(
             @RequestBody ScheduleRequestDto dto
     )
@@ -111,10 +113,10 @@ public class SchedulerController {
                 .modifiedDate(LocalDateTime.now())
                 .build();
 
-        return new ResponseEntity<>(schedulerService.updateToDo(user, toDo), HttpStatus.OK);
+        return ResponseEntity.ok(schedulerService.updateToDo(user, toDo));
     }
 
-    // 유저와 해당 유저의 모든 일정 삭제
+    // 사용자와 해당 사용자의 모든 일정 삭제
     @DeleteMapping("/users")
     public ResponseEntity<Void> deleteUser(@RequestBody UserRequestDto dto) {
 
@@ -126,10 +128,10 @@ public class SchedulerController {
 
         schedulerService.deleteUser(user);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
-    // 해당 유저의 특정 일정 삭제
+    // 해당 사용자의 특정 일정 삭제
     @DeleteMapping("/users/to-dos/{toDoId}")
     public ResponseEntity<Void> deleteToDo(@PathVariable Long toDoId, @RequestBody UserRequestDto dto) {
 
@@ -140,6 +142,7 @@ public class SchedulerController {
                 .build();
 
         schedulerService.deleteToDo(user, toDoId);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return ResponseEntity.noContent().build();
     }
 }
