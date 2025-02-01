@@ -96,6 +96,7 @@ public class SchedulerServiceImpl implements SchedulerService {
          */
 
         // 그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
+
         User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
                 .orElseGet(() -> schedulerRepository.saveUser(user));
 
@@ -110,17 +111,11 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public UserResponseDto updateUser(User user) {
 
-        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
+        schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
 
-        int updatedRow = schedulerRepository.updateUser(user);
+        schedulerRepository.updateUser(user);
 
-        if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        User updatedUser = schedulerRepository.findUserByUserId(user.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+        User updatedUser = schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
 
         return new UserResponseDto(updatedUser);
     }
@@ -128,20 +123,13 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public ToDoResponseDto updateToDo(User user, ToDo toDo) {
 
-        User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자가 존재하지 않습니다 = " + user.getName() + "-" + user.getId()));
+        User savedUser = schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
 
-        schedulerRepository.findToDoById(toDo.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDo.getId()));
+        schedulerRepository.findToDoByIdOrElseThrow(toDo.getId());
 
-        int updatedRow = schedulerRepository.updateToDo(toDo);
+        schedulerRepository.updateToDo(toDo);
 
-        if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        ToDo updatedToDo = schedulerRepository.findToDoById(toDo.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDo.getId()));
+        ToDo updatedToDo = schedulerRepository.findToDoByIdOrElseThrow(toDo.getId());
 
         return new ToDoResponseDto(updatedToDo, savedUser);
     }
@@ -150,8 +138,7 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Transactional
     public void deleteUser(User user) {
 
-        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
+        schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
 
         schedulerRepository.deleteToDoListByUserId(user.getId());
 
@@ -161,14 +148,9 @@ public class SchedulerServiceImpl implements SchedulerService {
     @Override
     public void deleteToDo(User user, Long toDoId) {
 
-        schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
+        schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
 
-        int deletedRow = schedulerRepository.deleteToDo(toDoId);
-
-        if (deletedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + toDoId);
-        }
+        schedulerRepository.deleteToDo(toDoId);
     }
 
 

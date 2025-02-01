@@ -117,6 +117,7 @@ public class SchedulerController {
     // 유저와 해당 유저의 모든 일정 삭제
     @DeleteMapping("/users")
     public ResponseEntity<Void> deleteUser(@RequestBody UserRequestDto dto) {
+
         User user = User.builder()
                 .name(dto.getName())
                 .id(dto.getId())
@@ -131,6 +132,7 @@ public class SchedulerController {
     // 해당 유저의 특정 일정 삭제
     @DeleteMapping("/users/to-dos/{toDoId}")
     public ResponseEntity<Void> deleteToDo(@PathVariable Long toDoId, @RequestBody UserRequestDto dto) {
+
         User user = User.builder()
                 .name(dto.getName())
                 .id(dto.getId())
