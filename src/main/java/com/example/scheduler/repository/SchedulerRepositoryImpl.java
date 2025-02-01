@@ -139,8 +139,9 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     @Override
     public void updateToDo(ToDo toDo) {
 
-        int updatedRow = jdbcTemplate.update("update to_do set work = ?, modified_date = ? where id = ?",
+        int updatedRow = jdbcTemplate.update("update to_do set work = ?, date = ?, modified_date = ? where id = ?",
                 toDo.getWork(),
+                Date.valueOf(toDo.getDate()),
                 Timestamp.valueOf(toDo.getModifiedDate()),
                 toDo.getId());
 

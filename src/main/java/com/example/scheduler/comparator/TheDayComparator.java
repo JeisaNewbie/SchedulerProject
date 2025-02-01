@@ -1,6 +1,6 @@
 package com.example.scheduler.comparator;
 
-import com.example.scheduler.dto.ToDoResponseDto;
+import com.example.scheduler.dto.response.ToDoResponseDto;
 
 import java.util.Comparator;
 
