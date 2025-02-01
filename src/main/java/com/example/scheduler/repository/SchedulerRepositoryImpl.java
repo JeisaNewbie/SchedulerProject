@@ -2,10 +2,12 @@ package com.example.scheduler.repository;
 
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -80,10 +82,18 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
 
     @Override
     public Optional<User> findUserByUserIdAndPassword(Long userId, String password) {
-        // 사용자 검증 로직 수정
         return jdbcTemplate.query("select * from user where id = ? and password = ?", userRowMapper(), userId, password)
                 .stream()
                 .findAny();
+    }
+
+    @Override
+    public User findUserByUserIdAndPasswordOrElseThrow(Long userId, String password) {
+        // 사용자 검증 로직 수정
+        return jdbcTemplate.query("select * from user where id = ? and password = ?", userRowMapper(), userId, password)
+                .stream()
+                .findAny()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
     }
 
 
@@ -117,25 +127,44 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public int updateUser(User user) {
-        return jdbcTemplate.update("update user set name = ?, email = ? where id = ?", user.getName(), user.getEmail(), user.getId());
+    public void updateUser(User user) {
+
+        int updatedRow = jdbcTemplate.update("update user set name = ?, email = ? where id = ?", user.getName(), user.getEmail(), user.getId());
+
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 사용자가 존재하지 않습니다 = " + user.getName() + '-' + user.getId());
+        }
     }
 
     @Override
-    public int updateToDo(ToDo toDo) {
-        return jdbcTemplate.update("update to_do set work = ?, modified_date = ? where id = ?", toDo.getWork(), Timestamp.valueOf(toDo.getModifiedDate()), toDo.getId());
+    public void updateToDo(ToDo toDo) {
+
+        int updatedRow = jdbcTemplate.update("update to_do set work = ?, modified_date = ? where id = ?",
+                toDo.getWork(),
+                Timestamp.valueOf(toDo.getModifiedDate()),
+                toDo.getId());
+
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 일정이 존재하지 않습니다 = " + toDo.getId());
+        }
     }
 
     @Override
-    public Optional<ToDo> findToDoById(Long id) {
+    public ToDo findToDoByIdOrElseThrow(Long id) {
         return jdbcTemplate.query("select * from to_do where id = ?", toDoRowMapper(), id)
                 .stream()
-                .findAny();
+                .findAny()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정이 존재하지 않습니다 = " + id));
     }
 
     @Override
-    public int deleteToDo(Long toDoId) {
-        return jdbcTemplate.update("delete from to_do where id = ?", toDoId);
+    public void deleteToDo(Long toDoId) {
+
+        int deletedRow = jdbcTemplate.update("delete from to_do where id = ?", toDoId);
+
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 일정이 존재하지 않습니다 = " + toDoId);
+        }
     }
 
     @Override

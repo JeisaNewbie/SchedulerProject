@@ -16,7 +16,11 @@ public interface SchedulerRepository {
 
     Optional<User> findUserByUserIdAndPassword(Long userId, String password);
 
+    User findUserByUserIdAndPasswordOrElseThrow(Long userId, String password);
+
     Optional<User> findUserByUserNameAndUserId(String userName, Long userId);
+
+    ToDo findToDoByIdOrElseThrow(Long id);
 
     List<ToDo> findToDoListByUserId(Long userId);
 
@@ -24,15 +28,14 @@ public interface SchedulerRepository {
 
     List<ToDo> findToDoListByTheDay(LocalDate date);
 
-    int deleteToDo(Long toDoId);
+    void deleteToDo(Long toDoId);
 
     void deleteToDoListByUserId(Long userId);
 
     void deleteUser(Long id);
 
-    int updateUser(User user);
+    void updateUser(User user);
 
-    int updateToDo(ToDo toDo);
+    void updateToDo(ToDo toDo);
 
-    Optional<ToDo> findToDoById(Long id);
 }
