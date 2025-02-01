@@ -1,5 +1,6 @@
 package com.example.scheduler.repository;
 
+import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 import org.springframework.http.HttpStatus;
@@ -122,8 +123,12 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public List<ToDo> findToDoListByTheDay(LocalDate date) {
-        return jdbcTemplate.query("select * from to_do where date = ?", toDoRowMapper(), Date.valueOf(date));
+    public List<ToDo> findToDoListByTheDay(LocalDate date, Paging paging) {
+        return jdbcTemplate.query("select * from to_do where date = ? order by date limit ? offset ?",
+                toDoRowMapper(),
+                Date.valueOf(date),
+                paging.getPageSize(),
+                paging.getOffset());
     }
 
     @Override

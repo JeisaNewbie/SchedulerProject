@@ -7,6 +7,7 @@ import com.example.scheduler.dto.request.UserRequestDto;
 import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.dto.response.ToDoResponseDto;
 import com.example.scheduler.dto.response.UserResponseDto;
+import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.service.SchedulerService;
@@ -52,14 +53,18 @@ public class SchedulerController {
         return ResponseEntity.ok(list);
     }
 
-    // D-DAY 로 해당 날짜의 모든 일정 조회
+    // D-DAY 로 해당 날짜의 모든 일정 조회 (Pagination 기능 추가)
     @GetMapping("/the-day/{date}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByTheDay(
             @PathVariable LocalDate date,
+            @Min(value = 1, message = "page 값은 1 이상이어야 합니다.") @RequestParam(defaultValue = "1") String page,
+            @Min(value = 1, message = "size 값은 10 이상이어야 합니다.") @RequestParam(defaultValue = "10") String size,
             @RequestParam(defaultValue = "asc") String order
     ) {
 
-         List<ToDoResponseDto> list = schedulerService.findScheduleByTheDay(date);
+        Paging paging = new Paging(Long.parseLong(page), Long.parseLong(size));
+
+        List<ToDoResponseDto> list = schedulerService.findScheduleByTheDay(date, paging);
 
         if ("desc".equals(order)) {
             list.sort(new TheDayComparator().reversed());
@@ -90,6 +95,30 @@ public class SchedulerController {
                 .build();
 
         return ResponseEntity.ok(schedulerService.saveSchedule(user, toDo));
+    }
+
+    @PostMapping("/users/to-dos")
+    public ResponseEntity<ScheduleResponseDto> createToDo(
+            @Valid @RequestBody ScheduleRequestDto dto
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+
+        User user = User.builder()
+                .id(dto.getUser().getId())
+                .name(dto.getUser().getName())
+                .email(dto.getUser().getEmail())
+                .password(dto.getUser().getPassword())
+                .build();
+
+        ToDo toDo = ToDo.builder()
+                .id(dto.getToDo().getId())
+                .registeredDate(now)
+                .modifiedDate(now)
+                .date(dto.getToDo().getDate())
+                .work(dto.getToDo().getWork())
+                .build();
+
+        return ResponseEntity.ok(schedulerService.saveToDo(user, toDo));
     }
 
     // 사용자 정보 수정
