@@ -1,9 +1,9 @@
 package com.example.scheduler.service;
 
 
-import com.example.scheduler.dto.ScheduleResponseDto;
-import com.example.scheduler.dto.ToDoResponseDto;
-import com.example.scheduler.dto.UserResponseDto;
+import com.example.scheduler.dto.response.ScheduleResponseDto;
+import com.example.scheduler.dto.response.ToDoResponseDto;
+import com.example.scheduler.dto.response.UserResponseDto;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 

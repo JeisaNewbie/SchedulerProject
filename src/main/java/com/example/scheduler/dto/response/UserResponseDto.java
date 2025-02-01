@@ -1,4 +1,4 @@
-package com.example.scheduler.dto;
+package com.example.scheduler.dto.response;
 
 import com.example.scheduler.entity.User;
 import lombok.AllArgsConstructor;
