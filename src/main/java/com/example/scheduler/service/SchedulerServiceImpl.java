@@ -3,6 +3,7 @@ package com.example.scheduler.service;
 import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.dto.response.ToDoResponseDto;
 import com.example.scheduler.dto.response.UserResponseDto;
+import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.repository.SchedulerRepository;
@@ -53,7 +54,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     // D-DAY 로 해당 날짜의 모든 일정 조회
     @Override
-    public List<ToDoResponseDto> findScheduleByTheDay(LocalDate date) {
+    public List<ToDoResponseDto> findScheduleByTheDay(LocalDate date, Paging paging) {
 
         /*
         * toList() 대신 collect(Collectors.toList()) 를 사용한 이유
@@ -64,7 +65,7 @@ public class SchedulerServiceImpl implements SchedulerService {
         * stream 에서 mutable list 를 반환하는게 가독성이 더 좋아보여서 선택했다.
         */
 
-        return schedulerRepository.findToDoListByTheDay(date)
+        return schedulerRepository.findToDoListByTheDay(date, paging)
                 .stream()
                 .map(toDo -> {
                     User savedUser = schedulerRepository.findUserByUserId(toDo.getUserId())
@@ -101,6 +102,17 @@ public class SchedulerServiceImpl implements SchedulerService {
                 .orElseGet(() -> schedulerRepository.saveUser(user));
 
         // 새 일정을 추가
+        toDo.setUser(savedUser);
+        ToDo savedTodo = schedulerRepository.saveToDo(toDo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+        return new ScheduleResponseDto(savedUser, savedTodo);
+    }
+
+    @Override
+    public ScheduleResponseDto saveToDo(User user, ToDo toDo) {
+        User savedUser = schedulerRepository.findUserByUserIdAndPasswordOrElseThrow(user.getId(), user.getPassword());
+
         toDo.setUser(savedUser);
         ToDo savedTodo = schedulerRepository.saveToDo(toDo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));

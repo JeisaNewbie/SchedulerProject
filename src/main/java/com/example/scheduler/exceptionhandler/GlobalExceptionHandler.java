@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-    //RequestParams 에서 검증되는 값에 대한 예외를 처리
+    //RequestParams 과 PathVariable 에서 검증되는 값에 대한 예외를 처리
     @Override
     protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, Object> response = new HashMap<>();

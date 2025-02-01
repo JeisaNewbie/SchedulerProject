@@ -1,5 +1,6 @@
 package com.example.scheduler.repository;
 
+import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 
@@ -26,7 +27,7 @@ public interface SchedulerRepository {
 
     List<ToDo> findToDoListByModifiedDate(LocalDate date);
 
-    List<ToDo> findToDoListByTheDay(LocalDate date);
+    List<ToDo> findToDoListByTheDay(LocalDate date, Paging paging);
 
     void deleteToDo(Long toDoId);
 

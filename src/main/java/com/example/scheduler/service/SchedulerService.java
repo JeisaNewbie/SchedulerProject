@@ -4,6 +4,7 @@ package com.example.scheduler.service;
 import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.dto.response.ToDoResponseDto;
 import com.example.scheduler.dto.response.UserResponseDto;
+import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 
@@ -12,8 +13,9 @@ import java.util.List;
 
 public interface SchedulerService {
     List<ToDoResponseDto> findScheduleByModifiedDate(LocalDate date);
-    List<ToDoResponseDto> findScheduleByTheDay(LocalDate date);
+    List<ToDoResponseDto> findScheduleByTheDay(LocalDate date, Paging paging);
     ScheduleResponseDto saveSchedule(User user, ToDo toDo);
+    ScheduleResponseDto saveToDo(User user, ToDo toDo);
     UserResponseDto updateUser(User user);
     ToDoResponseDto updateToDo(User user, ToDo toDo);
     void deleteUser(User user);
