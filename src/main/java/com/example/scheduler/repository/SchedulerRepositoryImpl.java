@@ -51,7 +51,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public Optional<ToDo> saveToDo(ToDo toDo) {
+    public ToDo saveToDo(ToDo toDo) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("to_do")
                 .usingGeneratedKeyColumns("id");
@@ -65,13 +65,13 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
 
         Number key = insert.executeAndReturnKey(params);
 
-        return Optional.ofNullable(ToDo.builder()
+        return ToDo.builder()
                 .id(key.longValue())
                 .date(toDo.getDate())
                 .registeredDate(toDo.getRegisteredDate())
                 .modifiedDate(toDo.getModifiedDate())
                 .work(toDo.getWork())
-                .build());
+                .build();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
         return jdbcTemplate.query("select * from user where id = ? and password = ?", userRowMapper(), userId, password)
                 .stream()
                 .findAny()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "사용자의 ID 혹은 비밀번호가 일치하지 않습니다."));
     }
 
 
@@ -137,7 +137,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
         int updatedRow = jdbcTemplate.update("update user set name = ?, email = ? where id = ?", user.getName(), user.getEmail(), user.getId());
 
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 사용자가 존재하지 않습니다 = " + user.getName() + '-' + user.getId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "수정할 사용자가 존재하지 않습니다 = " + user.getName() + '-' + user.getId());
         }
     }
 
@@ -151,7 +151,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
                 toDo.getId());
 
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 일정이 존재하지 않습니다 = " + toDo.getId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "수정할 일정이 존재하지 않습니다 = " + toDo.getId());
         }
     }
 
@@ -169,7 +169,7 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
         int deletedRow = jdbcTemplate.update("delete from to_do where id = ?", toDoId);
 
         if (deletedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제할 일정이 존재하지 않습니다 = " + toDoId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제할 일정이 존재하지 않습니다 = " + toDoId);
         }
     }
 

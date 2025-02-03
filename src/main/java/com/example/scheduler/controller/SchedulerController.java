@@ -13,6 +13,7 @@ import com.example.scheduler.entity.User;
 import com.example.scheduler.service.SchedulerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,7 +95,7 @@ public class SchedulerController {
                 .work(dto.getToDo().getWork())
                 .build();
 
-        return ResponseEntity.ok(schedulerService.saveSchedule(user, toDo));
+        return ResponseEntity.status(HttpStatus.CREATED).body(schedulerService.saveSchedule(user, toDo));
     }
 
     @PostMapping("/users/to-dos")
@@ -118,7 +119,7 @@ public class SchedulerController {
                 .work(dto.getToDo().getWork())
                 .build();
 
-        return ResponseEntity.ok(schedulerService.saveToDo(user, toDo));
+        return ResponseEntity.status(HttpStatus.CREATED).body(schedulerService.saveToDo(user, toDo));
     }
 
     // 사용자 정보 수정
