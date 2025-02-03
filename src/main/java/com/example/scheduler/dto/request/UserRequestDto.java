@@ -1,9 +1,6 @@
 package com.example.scheduler.dto.request;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -21,9 +18,9 @@ public class UserRequestDto {
     @Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", message = "이메일 형식을 지켜주세요.")
     private String email;
 
-    @NotBlank (message = "비밀번호를 적어주세요.")
+    @NotNull(message = "비밀번호를 적어주세요.")
     @Min(value = 1, message = "비밀번호는 최소 1자리 입니다.")
-    @Max(value = 5, message = "비밀번호는 최대 5자리 입니다.")
+    @Max(value = 99999, message = "비밀번호는 최대 5자리 입니다.")
     private Integer password;
 
 }

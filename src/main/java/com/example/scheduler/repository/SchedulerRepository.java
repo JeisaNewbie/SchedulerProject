@@ -15,9 +15,9 @@ public interface SchedulerRepository {
 
     Optional<User> findUserByUserId(Long userId);
 
-    Optional<User> findUserByUserIdAndPassword(Long userId, String password);
+    Optional<User> findUserByUserIdAndPassword(Long userId, Integer password);
 
-    User findUserByUserIdAndPasswordOrElseThrow(Long userId, String password);
+    User findUserByUserIdAndPasswordOrElseThrow(Long userId, Integer password);
 
     Optional<User> findUserByUserNameAndUserId(String userName, Long userId);
 
