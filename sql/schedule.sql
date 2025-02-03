@@ -1,9 +1,9 @@
 -- 유저 테이블
 CREATE TABLE user (
-                      id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                      email VARCHAR(100) UNIQUE NOT NULL ,
-                      password INT NOT NULL ,
-                      name CHAR(10) UNICODE NOT NULL
+      id BIGINT PRIMARY KEY AUTO_INCREMENT,
+      email VARCHAR(100) UNIQUE NOT NULL ,
+      password INT NOT NULL ,
+      name CHAR(10) UNICODE NOT NULL
 );
 
 -- 일정 테이블
