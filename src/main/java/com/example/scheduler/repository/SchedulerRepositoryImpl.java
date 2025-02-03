@@ -123,6 +123,23 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
+    public List<ToDo> findToDoListByUserIdAndModifiedDate(Long userId, LocalDate date) {
+        LocalDateTime theDay = LocalDateTime.of(date, LocalTime.MIN);
+        LocalDateTime theDayAfter = LocalDateTime.of(date.plusDays(1), LocalTime.MIN);
+
+        return jdbcTemplate.query("select * from to_do where user_id = ? and modified_date >= ? and modified_date < ? order by modified_date desc",
+                toDoRowMapper(),
+                userId,
+                Timestamp.valueOf(theDay),
+                Timestamp.valueOf(theDayAfter));
+    }
+
+    @Override
+    public List<ToDo> findAllToDo() {
+        return jdbcTemplate.query("select * from to_do", toDoRowMapper());
+    }
+
+    @Override
     public List<ToDo> findToDoListByTheDay(LocalDate date, Paging paging) {
         return jdbcTemplate.query("select * from to_do where date = ? order by date limit ? offset ?",
                 toDoRowMapper(),

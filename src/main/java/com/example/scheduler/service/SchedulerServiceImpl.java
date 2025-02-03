@@ -52,6 +52,29 @@ public class SchedulerServiceImpl implements SchedulerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ToDoResponseDto> findScheduleByUserNameAndModifiedDate(String userName, Long userId, LocalDate date) {
+        User savedUser = schedulerRepository.findUserByUserNameAndUserId(userName, userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자가 존재하지 않습니다 = " + userName + "-" + userId));
+
+        List<ToDo> toDoList = schedulerRepository.findToDoListByUserIdAndModifiedDate(savedUser.getId(), date);
+        return toDoList.stream().map(toDo -> new ToDoResponseDto(toDo, savedUser)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ToDoResponseDto> findAllToDo() {
+        return schedulerRepository.findAllToDo().stream()
+                .map(toDo -> {
+                    User savedUser = schedulerRepository.findUserByUserId(toDo.getUserId())
+                            .orElseGet(() -> User.builder().name("임시 사용자")
+                                    .email("example@example.com")
+                                    .id(null)
+                                    .build());
+                    return new ToDoResponseDto(toDo, savedUser);
+                })
+                .collect(Collectors.toList());
+    }
+
     // D-DAY 로 해당 날짜의 모든 일정 조회
     @Override
     public List<ToDoResponseDto> findScheduleByTheDay(LocalDate date, Paging paging) {

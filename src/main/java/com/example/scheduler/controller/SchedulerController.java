@@ -30,6 +30,11 @@ public class SchedulerController {
         this.schedulerService = schedulerService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<ToDoResponseDto>> findAll() {
+        return ResponseEntity.ok(schedulerService.findAllToDo());
+    }
+
     // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @GetMapping("/users/{name}-{id}")
     public ResponseEntity<List<ToDoResponseDto>> findScheduleByName(
@@ -49,6 +54,23 @@ public class SchedulerController {
 
         if ("desc".equals(order)) {
             list.sort(new ModifiedDateComparator().reversed());
+        }
+
+        return ResponseEntity.ok(list);
+    }
+
+    // 사용자 명과 수정일로 일정 조회
+    @GetMapping("/users/{name}-{id}/modified-date/{date}")
+    public ResponseEntity<List<ToDoResponseDto>> findScheduleByUserNameAndModifiedDate(
+            @PathVariable String name,
+            @Min(value = 1, message = "ID 값은 1 이상이어야 합니다.") @PathVariable Long id,
+            @PathVariable LocalDate date,
+            @RequestParam(defaultValue = "desc") String order
+    ) {
+        List<ToDoResponseDto> list = schedulerService.findScheduleByUserNameAndModifiedDate(name, id, date);
+
+        if ("asc".equals(order)) {
+            list.sort(new ModifiedDateComparator());
         }
 
         return ResponseEntity.ok(list);

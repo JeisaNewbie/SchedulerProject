@@ -23,4 +23,8 @@ public interface SchedulerService {
     void deleteToDo(User user, Long toDoId);
 
     List<ToDoResponseDto> findScheduleByUserNameAndUserId(String userName, Long userId);
+
+    List<ToDoResponseDto> findScheduleByUserNameAndModifiedDate(String userName, Long userId, LocalDate date);
+
+    List<ToDoResponseDto> findAllToDo();
 }

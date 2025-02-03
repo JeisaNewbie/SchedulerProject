@@ -39,4 +39,7 @@ public interface SchedulerRepository {
 
     void updateToDo(ToDo toDo);
 
+    List<ToDo> findToDoListByUserIdAndModifiedDate(Long userId, LocalDate date);
+
+    List<ToDo> findAllToDo();
 }
