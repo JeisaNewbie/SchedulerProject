@@ -1,5 +1,6 @@
 package com.example.scheduler.dto.request;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,6 +22,8 @@ public class UserRequestDto {
     private String email;
 
     @NotBlank (message = "비밀번호를 적어주세요.")
-    private String password;
+    @Min(value = 1, message = "비밀번호는 최소 1자리 입니다.")
+    @Max(value = 5, message = "비밀번호는 최대 5자리 입니다.")
+    private Integer password;
 
 }
