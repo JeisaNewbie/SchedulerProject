@@ -82,14 +82,14 @@ public class SchedulerRepositoryImpl implements SchedulerRepository {
     }
 
     @Override
-    public Optional<User> findUserByUserIdAndPassword(Long userId, String password) {
+    public Optional<User> findUserByUserIdAndPassword(Long userId, Integer password) {
         return jdbcTemplate.query("select * from user where id = ? and password = ?", userRowMapper(), userId, password)
                 .stream()
                 .findAny();
     }
 
     @Override
-    public User findUserByUserIdAndPasswordOrElseThrow(Long userId, String password) {
+    public User findUserByUserIdAndPasswordOrElseThrow(Long userId, Integer password) {
         // 사용자 검증 로직 수정
         return jdbcTemplate.query("select * from user where id = ? and password = ?", userRowMapper(), userId, password)
                 .stream()
