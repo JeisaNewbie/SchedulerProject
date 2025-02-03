@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface SchedulerRepository {
     User saveUser(User user);
 
-    Optional<ToDo> saveToDo(ToDo toDo);
+    ToDo saveToDo(ToDo toDo);
 
     Optional<User> findUserByUserId(Long userId);
 
