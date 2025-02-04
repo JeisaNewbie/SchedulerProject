@@ -7,6 +7,7 @@ import com.example.scheduler.entity.Paging;
 import com.example.scheduler.entity.ToDo;
 import com.example.scheduler.entity.User;
 import com.example.scheduler.repository.SchedulerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SchedulerServiceImpl implements SchedulerService {
-    private final SchedulerRepository schedulerRepository;
 
-    public SchedulerServiceImpl(SchedulerRepository schedulerRepository) {
-        this.schedulerRepository = schedulerRepository;
-    }
+    private final SchedulerRepository schedulerRepository;
 
     // 사용자 명 으로 해당 날짜의 모든 일정 조회
     @Override
