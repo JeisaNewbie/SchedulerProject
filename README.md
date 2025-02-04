@@ -7,16 +7,19 @@
 2️⃣ 엔드포인트 목록
 
 | HTTP 메서드 | 엔드포인트 | 설명 |
-|----------|---------------------------------------|-----------------------|
-| `GET`    | `/api/schedule/users/{name}-{id}`     | 사용자명 및 ID로 일정 조회 |
-| `GET`    | `/api/schedule/modified-date/{date}`  | 수정일 기준 일정 조회 |
-| `GET`    | `/api/schedule/the-day/{date}`        | 특정 날짜(D-DAY) 일정 조회 (페이지네이션 포함) |
-| `POST`   | `/api/schedule`                       | 사용자 및 일정 생성 |
-| `POST`   | `/api/schedule/users/to-dos`          | 사용자 일정(To-Do) 생성 |
-| `PATCH`  | `/api/schedule/users`                 | 사용자 정보 수정 |
-| `PATCH`  | `/api/schedule/users/to-dos`          | 일정 수정 |
-| `DELETE` | `/api/schedule/users`                 | 사용자 및 모든 일정 삭제 |
-| `DELETE` | `/api/schedule/users/to-dos/{toDoId}` | 특정 일정(To-Do) 삭제 |
+|----------|--------------------------------------------|-----------------------|
+| `공통 경로`| `/api/schedule`                            | 모든 엔드포인트 앞에 존재   |
+| `GET`    | `/`                                        | 모든 일정 조회           |
+| `GET`    | `/users/{name}-{id}`                       | 사용자 이름 으로 일정 조회  |
+| `GET`    | `/modified-date/{date}`                    | 수정일 기준 일정 조회 |
+| `GET`    | `/users/{name}-{id}/modified-date/{date}`  | 사용자 이름과 수정일 기준 일정 조회 |
+| `GET`    | `/the-day/{date}`                          | 특정 날짜(D-DAY) 일정 조회 (페이지네이션 포함) |
+| `POST`   | `/`                                        | 사용자 및 일정 생성 |
+| `POST`   | `/users/to-dos`                            | 사용자 일정(To-Do) 생성 |
+| `PATCH`  | `/users`                                   | 사용자 정보 수정 |
+| `PATCH`  | `/users/to-dos`                            | 일정 수정 |
+| `DELETE` | `/users`                                   | 사용자 및 모든 일정 삭제 |
+| `DELETE` | `/users/to-dos/{toDoId}`                   | 특정 일정(To-Do) 삭제 |
 
 ---
 
