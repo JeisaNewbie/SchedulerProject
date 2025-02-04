@@ -108,14 +108,14 @@ public class SchedulerServiceImpl implements SchedulerService {
     public ScheduleResponseDto saveSchedule(User user, ToDo toDo) {
 
         /*
-        사용자가 존재하는지 확인
-        사용자가 존재하지 않으면 사용자 저장
-        데이터 베이스에 유저가 존재해서 유저를 반환하더라도 orElse 는 항상 실행이 보장된다.
-        따라서 saveUser(user)가 실행이 되기 때문에 Unique 속성인 email Column 으로 인하여 예외가 발생한다.
+        * 사용자가 존재하는지 확인
+        * 사용자가 존재하지 않으면 사용자 저장
+        * 데이터 베이스에 유저가 존재해서 유저를 반환하더라도 orElse 는 항상 실행이 보장된다.
+        * 따라서 saveUser(user)가 실행이 되기 때문에 Unique 속성인 email Column 으로 인하여 예외가 발생한다.
 
-        User savedUser = schedulerRepository.findUserByEmailAndPassword(user)
-                .orElse(schedulerRepository.saveUser(user));
-        그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
+        * User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
+            .orElse(schedulerRepository.saveUser(user));
+        * 그렇기 때문에 saveUser(user) 함수의 실행을 Null 체크 이후로 보장해야 한다.
         */
 
         User savedUser = schedulerRepository.findUserByUserIdAndPassword(user.getId(), user.getPassword())
