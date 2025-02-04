@@ -49,7 +49,7 @@ GET /api/schedule/modified-date/2024-01-30?order=desc HTTP/1.1
 - GET /api/schedule/users/{name}-{id}/modified-date/{date}
 - 특정 수정일(date) 기준으로 일정을 조회합니다.
 - 정렬 방식(asc 또는 desc)을 지원합니다.
-- 정렬 방식은 입력하지 않을 경우 asc 로 정렬됩니다.
+- 정렬 방식은 입력하지 않을 경우 desc 로 정렬됩니다.
 
 🔹 요청 예시
 GET /api/schedule/users/aaa-1/modified-date/2024-01-30 HTTP/1.1

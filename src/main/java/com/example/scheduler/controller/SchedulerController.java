@@ -13,6 +13,7 @@ import com.example.scheduler.entity.User;
 import com.example.scheduler.service.SchedulerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedule")
+@RequiredArgsConstructor
 public class SchedulerController {
-    private final SchedulerService schedulerService;
 
-    public SchedulerController(SchedulerService schedulerService) {
-        this.schedulerService = schedulerService;
-    }
+    private final SchedulerService schedulerService;
 
     @GetMapping("/")
     public ResponseEntity<List<ToDoResponseDto>> findAll() {
