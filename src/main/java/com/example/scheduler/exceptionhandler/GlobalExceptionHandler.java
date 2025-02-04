@@ -36,7 +36,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         Map<String, Object> response = new HashMap<>();
 
-        response.put("ERROR", ex.getMessage());
         response.put("TIMESTAMP", LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Repository
 public class SchedulerRepositoryImpl implements SchedulerRepository {
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public SchedulerRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
